@@ -18,7 +18,7 @@ import { DomSanitizer, SafeHtml } from '@angular/platform-browser'; // <-- Impor
   styles: [`
   ul {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    grid-template-columns: repeat(auto-fit, minmax(450px, 1fr));
     gap: 20px;
     list-style: none;
     padding: 0;
