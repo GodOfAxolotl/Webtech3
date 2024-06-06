@@ -33,13 +33,14 @@ import { DomSanitizer, SafeHtml } from '@angular/platform-browser'; // <-- Impor
 export class ContentListComponent implements OnInit {
   items: ApiItem[] = [];
   filteredItems: ApiItem[] = []; // <-- Neues Array für gefilterte Elemente
+  filteredItemsImage: ApiItem[] = []; // <-- Neues Array für gefilterte Elemente
 
   constructor(private dataService: DataService, private sanitizer: DomSanitizer) {}
 
   ngOnInit() {
     this.dataService.getMashupData().subscribe(items => {
       this.items = items;
-      this.filteredItems = this.items.filter(item => item.type === "data:content" && item.stringValue != "");
+      this.filteredItems =[...this.items.filter(item => item.type === "data:content" && item.stringValue != "" && item.stringValue != undefined), ...this.items.filter(item => item.type === "data:email" && item.stringValue != "" && item.stringValue != undefined), ...this.items.filter(item => item.type === "data:person" && item.stringValue != "" && item.stringValue != undefined), ...this.items.filter(item => item.type === "data:organisation" && item.stringValue != "" && item.stringValue != undefined) ];
     });
   }
 
