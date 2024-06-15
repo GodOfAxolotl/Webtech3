@@ -10,7 +10,8 @@ export interface ApiItem {
   name: string;
   stringValue: string;
   fileUrl: string;
-  image: string;
+  images: string;
+  imageIdent?: string;
 }
 
 @Injectable({ providedIn: 'root' })

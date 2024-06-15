@@ -21,8 +21,11 @@ import { DomSanitizer, SafeHtml } from '@angular/platform-browser'; // <-- Impor
     <h2>Person</h2>
     <ul>
       <li *ngFor="let item of personItems">
-        <div>
+        <div class="container">
           <h3>{{ item.name }}</h3>
+          <img class="shadow rounded" *ngIf="item.images" 
+            [src]="item.fileUrl"  
+            alt="{{ item.name }}">
           <div [innerHTML]="sanitizeHtml(item.stringValue)"></div>
         </div>
       </li>
@@ -35,17 +38,6 @@ import { DomSanitizer, SafeHtml } from '@angular/platform-browser'; // <-- Impor
         <div>
           <h3>{{ item.name }}</h3>
           <div [innerHTML]="sanitizeHtml(item.stringValue)"></div>
-        </div>
-      </li>
-    </ul>
-  </div>
-  <div *ngIf="imageItems.length">
-    <h2>Images</h2>
-    <ul>
-      <li *ngFor="let item of imageItems">
-        <div>
-          <h3>{{ item.name }}</h3>
-          <img [src]="item.fileUrl" alt="{{ item.name }}">
         </div>
       </li>
     </ul>
@@ -69,17 +61,21 @@ import { DomSanitizer, SafeHtml } from '@angular/platform-browser'; // <-- Impor
     margin-top: 40px;
   }
 
-    img {
-    max-width: 300px;
-    }
+
+  .container img {
+    height: 100%;
+    width: 100%;
+    object-fit: contain;
+    margin-bottom: 10px;
+  }
 
 `]
 })
 
 export class ContentListComponent implements OnInit {
   items: ApiItem[] = [];
-  filteredItems: ApiItem[] = []; // <-- Neues Array für gefilterte Elemente
-  filteredItemsImage: ApiItem[] = []; // <-- Neues Array für gefilterte Elemente
+  filteredItems: ApiItem[] = [];
+  filteredItemsImage: ApiItem[] = []; 
   personItems: ApiItem[] = [];
   imageItems: ApiItem[] = [];
   organisationItems: ApiItem[] = [];
@@ -88,6 +84,8 @@ export class ContentListComponent implements OnInit {
   itentifierItems: ApiItem[] = [];
   connectionItems: ApiItem[] = [];
   contentItems: ApiItem[] = [];
+  imageDict: { [key: string]: ApiItem } = {};
+
 
   constructor(private dataService: DataService, private sanitizer: DomSanitizer) {}
 
@@ -98,7 +96,22 @@ export class ContentListComponent implements OnInit {
       this.contentItems = this.contentItems.filter(item => !item.stringValue.includes("<img")) //removes unformatable news feeds
       this.personItems = this.items.filter(item => item.type === "data:person" && item.stringValue);
       this.organisationItems = this.items.filter(item => item.type === "data:organisation" && item.stringValue);
-      this.imageItems = this.items.filter(item => item.type === "data:image" && item.fileUrl);
+      this.imageItems = this.items.filter(item => item.type === "data:images" && item.fileUrl);
+
+      this.imageItems.forEach(image => this.imageDict[image.ident] = image);
+      console.log(this.imageDict)
+
+
+
+      this.personItems.forEach(person => {
+        if (person.images) {
+          const imageIdent = person.images; 
+          const image = this.items.find(item => item.ident === imageIdent && item.type === 'data:image');
+          if (image) {
+            person.fileUrl = image.fileUrl;
+          }
+        }
+      });
 
       this.filteredItems =[...this.items.filter(item => item.type === "data:content" && item.stringValue != "" 
         && item.stringValue != undefined), ...this.items.filter(item => item.type === "data:email" 
