@@ -9,6 +9,7 @@ export interface ApiItem {
   ident: string;
   name: string;
   stringValue: string;
+  fileUrl: string;
   image: string;
 }
 

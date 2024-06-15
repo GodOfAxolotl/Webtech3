@@ -72,7 +72,7 @@
     display: flex;
     justify-content: space-around;
     width: 100%;
-    max-width: 50vw;
+    max-width: 80vw;
     margin-bottom: 3rem;
   }
 
@@ -154,6 +154,12 @@
     fill: var(--gray-900);
   }
 
+  .navbar {
+    background-color: #2a2058;
+    max-height: 50px;
+  }
+
+
   @media screen and (max-width: 2000px) {
     .content {
       flex-direction: column;
@@ -169,22 +175,23 @@
   } 
  
 </style>
-<nav class="navbar navbar-expand-lg bg-primary">
+
+<nav class="navbar sticky-top navbar-expand-lg">
   <div class="container-fluid">
-    <a class="navbar-brand" href="index.html">
+    <a class="navbar-brand" style="color: azure;" href="index.html">
       <img
-        src="assets/icon.png"
-        alt="Logo"
-        height="40"
-        class="nav-icon mr-2"
-      />
-     
+      src="assets/icon.png"
+      alt="Logo"
+      height="40"
+      class="nav-icon mr-2"/>
       Community Mashup
-      
-      
     </a>
-   
-    
+
+    <form class="form-inline nav-item">
+      <button type="button" style="margin: 5px;" class="btn btn-light" (click)="scroll('content')">content</button>
+      <button type="button" style="margin: 5px;" class="btn btn-light" (click)="scroll('person')">person</button>
+      <button type="button" style="margin: 5px;" class="btn btn-light" (click)="scroll('organ')">organ</button>
+    </form>
   </div>
 </nav>
 
@@ -194,4 +201,4 @@
   </div>
 </main>
 
-<router-outlet />
+<router-outlet/>

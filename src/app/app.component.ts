@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component} from '@angular/core';
 
 @Component({
   selector: 'app-root',
@@ -6,5 +6,13 @@ import { Component } from '@angular/core';
   styleUrl: './app.component.css'
 })
 export class AppComponent {
+
   title = 'Assignment3';
+
+  scroll(el: string) {
+    const element = document.getElementById(el);
+    if(element) {
+      element.scrollIntoView({behavior: 'smooth', block:'start'});
+    }
+  } 
 }
