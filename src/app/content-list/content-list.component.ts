@@ -1,12 +1,12 @@
 // content-list.component.ts
 import { Component, OnInit } from '@angular/core';
 import { DataService, ApiItem } from '../data.service';
-import { DomSanitizer, SafeHtml } from '@angular/platform-browser'; // <-- Import für DomSanitizer
+import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
 
 @Component({
   selector: 'app-content-list',
   template: `
-  <div *ngIf="bachelorContentItems.length">
+  <div *ngIf="bachelorContentItems.length" id="bachelor">
     <h2 >Bachelor-Arbeiten</h2>
     <ul>
       <li *ngFor="let item of bachelorContentItems">
@@ -18,7 +18,7 @@ import { DomSanitizer, SafeHtml } from '@angular/platform-browser'; // <-- Impor
     </ul>
   </div>
   <div *ngIf="contentItems.length" id="content">
-    <h2 >Content</h2>
+    <h2 >Inhalt</h2>
     <ul>
       <li *ngFor="let item of contentItems">
         <div>
@@ -29,7 +29,7 @@ import { DomSanitizer, SafeHtml } from '@angular/platform-browser'; // <-- Impor
     </ul>
   </div>
   <div *ngIf="personItems.length" id="person">
-    <h2>Person</h2>
+    <h2>Personen</h2>
     <ul>
       <li *ngFor="let item of personItems">
         <div class="container">
@@ -43,7 +43,7 @@ import { DomSanitizer, SafeHtml } from '@angular/platform-browser'; // <-- Impor
     </ul>
   </div>
   <div *ngIf="organisationItems.length" id="organ">
-    <h2 #organisation>Organisation</h2>
+    <h2 #organisation>Organisationen</h2>
     <ul>
       <li *ngFor="let item of organisationItems">
         <div>
@@ -58,18 +58,21 @@ import { DomSanitizer, SafeHtml } from '@angular/platform-browser'; // <-- Impor
   ul {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-    gap: 20px;
+    gap: 2rem;
     list-style: none;
     padding: 0;
   }
 
   li {
     border: 1px solid #ccc;
-    padding: 15px;
+    padding: 1.5rem;
+    border-radius: 5px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
   }
 
   h2 {
-    margin-top: 40px;
+    color: #2a2058;
+    margin-top: 2rem;
   }
 
   div {
@@ -77,38 +80,32 @@ import { DomSanitizer, SafeHtml } from '@angular/platform-browser'; // <-- Impor
   }
 
   .container img {
-    height: 100%;
-    width: 100%;
+    max-width: 100%;
+    height: auto;
     object-fit: contain;
-    margin-bottom: 10px;
+    margin-bottom: 1rem;
   }
 `]
 })
 
 export class ContentListComponent implements OnInit {
   items: ApiItem[] = [];
-  filteredItems: ApiItem[] = [];
-  filteredItemsImage: ApiItem[] = []; 
   personItems: ApiItem[] = [];
   imageItems: ApiItem[] = [];
   organisationItems: ApiItem[] = [];
-  metatagItems: ApiItem[] = [];
-  tagItems: ApiItem[] = [];
-  itentifierItems: ApiItem[] = [];
-  connectionItems: ApiItem[] = [];
   contentItems: ApiItem[] = [];
   imageDict: { [key: string]: ApiItem } = {};
-  bachelorMetaTags: string[] = []; 
-  bachelorItem: ApiItem | undefined; 
+
+  bachelorItem: ApiItem | undefined; // will grab the single bachelor announcement meta tag, the others are not needed
+  bachelorMetaTags: string[] = [];
   bachelorContentItems: ApiItem[] = [];
 
-  constructor(private dataService: DataService, private sanitizer: DomSanitizer) {}
+  constructor(private dataService: DataService, private sanitizer: DomSanitizer) { }
 
   ngOnInit() {
     this.dataService.getMashupData().subscribe(items => {
       this.items = items;
-      this.contentItems = this.items.filter(item => item.type === "data:content" && item.stringValue);
-      this.contentItems = this.contentItems.filter(item => !item.stringValue.includes("<img")) //removes unformatable news feeds
+      this.contentItems = this.items.filter(item => item.type === "data:content" && item.stringValue && !item.stringValue.includes("<img"));
       this.personItems = this.items.filter(item => item.type === "data:person" && item.stringValue);
       this.organisationItems = this.items.filter(item => item.type === "data:organisation" && item.stringValue);
       this.imageItems = this.items.filter(item => item.type === "data:images" && item.fileUrl);
@@ -116,36 +113,28 @@ export class ContentListComponent implements OnInit {
       this.bachelorItem = items.find(item => item.type === "data:metatag" && item.name === "type:bachelorarbeit");
 
       if (this.bachelorItem && this.bachelorItem.metaTagged) {
-        this.bachelorMetaTags = this.bachelorItem.metaTagged.split(" "); 
+        this.bachelorMetaTags = this.bachelorItem.metaTagged.split(" ");
       }
 
       this.bachelorContentItems = items.filter(item => this.bachelorMetaTags.includes(item.ident))
 
       this.imageItems.forEach(image => this.imageDict[image.ident] = image);
-      console.log(this.imageDict)
-
 
       this.personItems.forEach(person => {
         if (person.images) {
-          const imageIdent = person.images; 
+          const imageIdent = person.images;
           const image = this.items.find(item => item.ident === imageIdent && item.type === 'data:image');
           if (image) {
             person.fileUrl = image.fileUrl;
           }
-        }
+        } //iteriert über die sachen, die ein image haben und ordnet ihnen das item mit dem ident zu, welches dann das Bild ist
       });
 
-      this.filteredItems =[...this.items.filter(item => item.type === "data:content" && item.stringValue != "" 
-        && item.stringValue != undefined), ...this.items.filter(item => item.type === "data:email" 
-          && item.stringValue != "" && item.stringValue != undefined), ...this.items.filter(item => item.type === "data:person" 
-            && item.stringValue != "" && item.stringValue != undefined), ...this.items.filter(item => item.type === "data:organisation" 
-              && item.stringValue != "" && item.stringValue != undefined) ];
     });
   }
 
-  sanitizeHtml(html: string): SafeHtml { // <-- Methode zum Sanitize von HTML
+  sanitizeHtml(html: string): SafeHtml {
     return this.sanitizer.bypassSecurityTrustHtml(html);
   }
-
 
 }

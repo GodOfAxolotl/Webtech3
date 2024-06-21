@@ -19,7 +19,7 @@ export interface ApiItem {
 export class DataService {
   private mashupServerUrl = "https://cmnet.communitymashup.net/json/";
 
-  constructor(private http: HttpClient) {}
+  constructor(private http: HttpClient) { }
 
   getMashupData(): Observable<ApiItem[]> {
     return this.http.get<any>(this.mashupServerUrl).pipe(

@@ -1,4 +1,3 @@
-
 <style>
   :host {
     --bright-blue: oklch(51.01% 0.274 263.83);
@@ -43,16 +42,15 @@
     line-height: 100%;
     letter-spacing: -0.125rem;
     margin: 0;
-    font-family: "Inter Tight", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
-      Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji",
-      "Segoe UI Symbol";
+    font-family: "Inter Tight", -apple-system, BlinkMacSystemFont, "Segoe UI",
+      Roboto, Helvetica, Arial, sans-serif, "Apple Color Emoji",
+      "Segoe UI Emoji", "Segoe UI Symbol";
   }
 
   p {
     margin: 0;
     color: var(--gray-700);
   }
-
 
   main {
     width: 100%;
@@ -156,31 +154,35 @@
   }
 
   .navbar {
-  background-color: #2a2058;
-  min-height: 4rem; /* Use a fixed minimum height */
-  display: flex; /* Enable Flexbox for better alignment */
-  align-items: center; /* Vertically center items in the navbar */
-  padding: 0 1rem; /* Add some padding for spacing */
-}
-
-.navbar .form-inline {
-  margin-left: auto; 
-}
-
-.navbar .btn {
-  margin: 0.5rem 0.25rem; 
-}
-
-@media (max-width: 768px) { 
-  .navbar {
-    min-height: 3rem; 
+    background-color: #3c2849;
+    min-height: 4rem;
+    display: flex;
+    align-items: center;
+    padding: 0 1rem;
   }
+
+  .navbar .form-inline {
+    margin-left: auto;
+  }
+
   .navbar .btn {
-    padding: 0.25rem 0.5rem;
+    color: #f5f5f5;
+    margin: 0.5rem 0.25rem;
   }
-}
 
+  .btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(186, 239, 255, 0.15);
+  }
 
+  @media (max-width: 768px) {
+    .navbar {
+      min-height: 3rem;
+    }
+    .navbar .btn {
+      padding: 0.25rem 0.5rem;
+    }
+  }
 
   @media screen and (max-width: 2000px) {
     .content {
@@ -194,33 +196,103 @@
       background: var(--red-to-pink-to-purple-horizontal-gradient);
       margin-block: 1.5rem;
     }
-  } 
- 
+  }
+
+  .welcome {
+    background-color: #f5f5f5;
+    padding: 3rem 0;
+    text-align: center;
+  }
+
+  .welcome h1 {
+    margin: 3rem;
+    font-size: 2.5rem;
+    margin-bottom: 1rem;
+  }
+
+  .welcome button {
+    padding: 1rem 2rem;
+    font-size: 1.2rem;
+    width: 100%;
+  }
+
+  .button-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 2rem;
+    margin: 1rem;
+  }
 </style>
 
 <nav class="navbar sticky-top navbar-expand-lg">
   <div class="container-fluid">
-    <a class="navbar-brand" style="color: azure;" href="index.html">
-      <img
-      src="assets/icon.png"
-      alt="Logo"
-      height="40"
-      class="nav-icon mr-2"/>
+    <a class="navbar-brand" style="color: #f5f5f5" (click)="scroll('top')">
+      <img src="assets/icon.png" alt="Logo" height="40" class="mr-2" />
       Community Mashup
     </a>
 
-    <form class="form-inline nav-item">
-      <button type="button" style="margin: 5px;" class="btn btn-light" (click)="scroll('content')">Content</button>
-      <button type="button" style="margin: 5px;" class="btn btn-light" (click)="scroll('person')">Personen</button>
-      <button type="button" style="margin: 5px;" class="btn btn-light" (click)="scroll('organ')">Organisationen</button>
-    </form>
+    <button
+      class="navbar-toggler"
+      style="background: #f5f5f5"
+      type="button"
+      data-bs-toggle="collapse"
+      data-bs-target="#navbarNav"
+      aria-controls="navbarNav"
+      aria-expanded="false"
+      aria-label="Toggle navigation"
+    >
+      <span class="navbar-toggler-icon"></span>
+    </button>
+
+    <div class="collapse navbar-collapse" id="navbarNav">
+      <ul class="navbar-nav ml-auto">
+        <li class="nav-item">
+          <button class="btn" (click)="scroll('bachelor')">Projekte</button>
+        </li>
+        <li class="nav-item">
+          <button class="btn" (click)="scroll('content')">Inhalt</button>
+        </li>
+        <li class="nav-item">
+          <button class="btn" (click)="scroll('person')">Personen</button>
+        </li>
+        <li class="nav-item">
+          <button class="btn" (click)="scroll('organ')">Organisationen</button>
+        </li>
+      </ul>
+    </div>
   </div>
 </nav>
 
-<main class="main">
-  <div class="content">
-    <app-content-list></app-content-list>
+<div id="welcome" class="welcome" id="top">
+  <div class="container">
+    <h1>Willkommen bei Assignment 3</h1>
+    <p>Entdecke Inhalte aus dem Community Mashup</p>
+    <div class="button-container">
+      <div class="button-container">
+        <button
+          class="btn btn-primary btn-lg"
+          style="background-color: #3f073f"
+          (click)="scroll('bachelor')"
+        >
+          Jetzt loslegen
+        </button>
+        <button
+          class="btn btn-primary btn-lg"
+          style="background-color: #3f073f"
+          (click)="scroll('person')"
+        >
+          Zu den Mitarbeitenden
+        </button>
+      </div>
+    </div>
   </div>
-</main>
 
-<router-outlet/>
+  <main class="main">
+    <div class="content">
+      <app-content-list></app-content-list>
+    </div>
+  </main>
+
+  <router-outlet />
+</div>
