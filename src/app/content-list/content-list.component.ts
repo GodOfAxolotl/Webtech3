@@ -6,6 +6,17 @@ import { DomSanitizer, SafeHtml } from '@angular/platform-browser'; // <-- Impor
 @Component({
   selector: 'app-content-list',
   template: `
+  <div *ngIf="bachelorContentItems.length" id="content">
+    <h2 >Bachelor-Arbeiten</h2>
+    <ul>
+      <li *ngFor="let item of bachelorContentItems">
+        <div>
+          <h3>{{ item.name }}</h3>
+          <div [innerHTML]="sanitizeHtml(item.stringValue)"></div>
+        </div>
+      </li>
+    </ul>
+  </div>
   <div *ngIf="contentItems.length" id="content">
     <h2 >Content</h2>
     <ul>
@@ -61,6 +72,10 @@ import { DomSanitizer, SafeHtml } from '@angular/platform-browser'; // <-- Impor
     margin-top: 40px;
   }
 
+  div {
+  overflow-wrap: break-word;
+  }
+
 
   .container img {
     height: 100%;
@@ -85,7 +100,9 @@ export class ContentListComponent implements OnInit {
   connectionItems: ApiItem[] = [];
   contentItems: ApiItem[] = [];
   imageDict: { [key: string]: ApiItem } = {};
-
+  bachelorMetaTags: string[] = []; 
+  bachelorItem: ApiItem | undefined; 
+  bachelorContentItems: ApiItem[] = [];
 
   constructor(private dataService: DataService, private sanitizer: DomSanitizer) {}
 
@@ -98,9 +115,16 @@ export class ContentListComponent implements OnInit {
       this.organisationItems = this.items.filter(item => item.type === "data:organisation" && item.stringValue);
       this.imageItems = this.items.filter(item => item.type === "data:images" && item.fileUrl);
 
+      this.bachelorItem = items.find(item => item.type === "data:metatag" && item.name === "type:bachelorarbeit");
+
+      if (this.bachelorItem && this.bachelorItem.metaTagged) {
+        this.bachelorMetaTags = this.bachelorItem.metaTagged.split(" "); 
+      }
+
+      this.bachelorContentItems = items.filter(item => this.bachelorMetaTags.includes(item.ident))
+
       this.imageItems.forEach(image => this.imageDict[image.ident] = image);
       console.log(this.imageDict)
-
 
 
       this.personItems.forEach(person => {

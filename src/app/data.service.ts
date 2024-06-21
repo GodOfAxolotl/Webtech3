@@ -12,6 +12,7 @@ export interface ApiItem {
   fileUrl: string;
   images: string;
   imageIdent?: string;
+  metaTagged?: string;
 }
 
 @Injectable({ providedIn: 'root' })
