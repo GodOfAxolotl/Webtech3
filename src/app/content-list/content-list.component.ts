@@ -6,7 +6,7 @@ import { DomSanitizer, SafeHtml } from '@angular/platform-browser'; // <-- Impor
 @Component({
   selector: 'app-content-list',
   template: `
-  <div *ngIf="bachelorContentItems.length" id="content">
+  <div *ngIf="bachelorContentItems.length">
     <h2 >Bachelor-Arbeiten</h2>
     <ul>
       <li *ngFor="let item of bachelorContentItems">
@@ -76,14 +76,12 @@ import { DomSanitizer, SafeHtml } from '@angular/platform-browser'; // <-- Impor
   overflow-wrap: break-word;
   }
 
-
   .container img {
     height: 100%;
     width: 100%;
     object-fit: contain;
     margin-bottom: 10px;
   }
-
 `]
 })
 
